@@ -1,42 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import LoginForm from './components/LoginForm';
 import QuotationForm from './components/QuotationForm';
 import Results from './components/Results';
-import apiService from './services/apiService';
+import { useAuthStatus } from './hooks/useAuthStatus';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [quotationResult, setQuotationResult] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { isAuthenticated, isCheckingAuth, logout, setIsAuthenticated } = useAuthStatus();
 
-  // Check if user is already authenticated on app load
-  useEffect(() => {
-    const checkAuth = async () => {
-      if (apiService.isAuthenticated()) {
-        try {
-          // Test the token by making a health check request
-          await apiService.healthCheck();
-          setIsAuthenticated(true);
-        } catch (error) {
-          // Token is invalid, clear it
-          apiService.clearToken();
-          setIsAuthenticated(false);
-        }
-      }
-      setLoading(false);
-    };
-
-    checkAuth();
-  }, []);
-
-  const handleLoginSuccess = (response) => {
-    console.log('Login successful:', response);
+  const handleLoginSuccess = () => {
     setIsAuthenticated(true);
-    setQuotationResult(null); // Clear any previous results
+    setQuotationResult(null);
   };
 
   const handleQuotationResult = (result) => {
-    console.log('Quotation result:', result);
     setQuotationResult(result);
   };
 
@@ -45,12 +22,11 @@ function App() {
   };
 
   const handleLogout = () => {
-    apiService.logout();
-    setIsAuthenticated(false);
+    logout();
     setQuotationResult(null);
   };
 
-  if (loading) {
+  if (isCheckingAuth) {
     return (
       <div className="container">
         <div className="loading">
@@ -67,17 +43,8 @@ function App() {
         <p>Get instant quotes for your travel insurance needs</p>
         
         {isAuthenticated && (
-          <div style={{ marginTop: '16px' }}>
-            <button 
-              onClick={handleLogout}
-              className="btn"
-              style={{ 
-                backgroundColor: '#6b7280', 
-                color: 'white',
-                fontSize: '12px',
-                padding: '6px 12px'
-              }}
-            >
+          <div className="header-actions">
+            <button onClick={handleLogout} className="btn btn-secondary btn-small">
               Logout
             </button>
           </div>
@@ -99,18 +66,10 @@ function App() {
         </>
       )}
 
-      {/* Footer */}
-      <div style={{ 
-        textAlign: 'center', 
-        marginTop: '40px', 
-        padding: '20px', 
-        color: '#6b7280', 
-        fontSize: '14px',
-        borderTop: '1px solid #e5e7eb'
-      }}>
+      <footer className="app-footer">
         <p>Travel Insurance Quotation Demo System</p>
         <p>Built with Laravel 12 + React 19 + Vite</p>
-      </div>
+      </footer>
     </div>
   );
 }

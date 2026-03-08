@@ -1,6 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import apiService from '../services/apiService';
+import { useQuotationMutation } from '../hooks/useApiMutations';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro (EUR)' },
+  { code: 'GBP', name: 'British Pound (GBP)' },
+  { code: 'USD', name: 'US Dollar (USD)' },
+];
 
 const QuotationForm = ({ onQuotationResult }) => {
   const [formData, setFormData] = useState({
@@ -11,13 +17,8 @@ const QuotationForm = ({ onQuotationResult }) => {
   });
   
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-
-  const currencies = [
-    { code: 'EUR', name: 'Euro (€)' },
-    { code: 'GBP', name: 'British Pound (£)' },
-    { code: 'USD', name: 'US Dollar ($)' }
-  ];
+  const quotationMutation = useQuotationMutation();
+  const loading = quotationMutation.isPending;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -96,7 +97,6 @@ const QuotationForm = ({ onQuotationResult }) => {
       return;
     }
 
-    setLoading(true);
     setErrors({});
 
     try {
@@ -107,16 +107,12 @@ const QuotationForm = ({ onQuotationResult }) => {
         end_date: formData.end_date
       };
 
-      const response = await apiService.calculateQuotation(quotationData);
-      console.log('Quotation calculated:', response);
+      const response = await quotationMutation.mutateAsync(quotationData);
       onQuotationResult(response);
     } catch (error) {
-      console.error('Quotation calculation failed:', error);
       setErrors({
         general: error.message || 'Failed to calculate quotation. Please try again.'
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -127,18 +123,12 @@ const QuotationForm = ({ onQuotationResult }) => {
 
   return (
     <div className="card quotation-card">
-      <h2 style={{ marginBottom: '24px', textAlign: 'center' }}>
+      <h2 className="section-title">
         Travel Insurance Quotation
       </h2>
       
       {errors.general && (
-        <div style={{ 
-          color: '#dc2626', 
-          backgroundColor: '#fef2f2', 
-          padding: '12px', 
-          borderRadius: '4px', 
-          marginBottom: '16px' 
-        }}>
+        <div className="notice notice-error">
           {errors.general}
         </div>
       )}
@@ -159,7 +149,7 @@ const QuotationForm = ({ onQuotationResult }) => {
             disabled={loading}
           />
           {errors.ages && <div className="error">{errors.ages}</div>}
-          <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+          <div className="form-help-text">
             Ages must be between 18-70. For multiple travelers, separate with commas.
           </div>
         </div>
@@ -176,7 +166,7 @@ const QuotationForm = ({ onQuotationResult }) => {
             className="form-select"
             disabled={loading}
           >
-            {currencies.map(currency => (
+            {CURRENCIES.map(currency => (
               <option key={currency.code} value={currency.code}>
                 {currency.name}
               </option>

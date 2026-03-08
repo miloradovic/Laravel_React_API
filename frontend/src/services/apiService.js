@@ -1,129 +1,113 @@
 import axios from 'axios';
 
-class ApiService {
-  constructor() {
-    this.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-    this.token = localStorage.getItem('jwt_token');
-    
-    // Create axios instance
-    this.api = axios.create({
-      baseURL: this.baseURL,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+const TOKEN_STORAGE_KEY = 'jwt_token';
 
-    // Add request interceptor to include auth token
-    this.api.interceptors.request.use(
-      (config) => {
-        if (this.token) {
-          config.headers.Authorization = `Bearer ${this.token}`;
-        }
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      }
-    );
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-    // Add response interceptor for error handling
-    this.api.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        if (error.response?.status === 401) {
-          // Token expired or invalid
-          this.clearToken();
-          window.location.href = '/';
-        }
-        return Promise.reject(error);
-      }
-    );
+export const getToken = () => localStorage.getItem(TOKEN_STORAGE_KEY);
+
+export const setToken = (token) => {
+  localStorage.setItem(TOKEN_STORAGE_KEY, token);
+};
+
+export const clearToken = () => {
+  localStorage.removeItem(TOKEN_STORAGE_KEY);
+};
+
+export const isAuthenticated = () => Boolean(getToken());
+
+api.interceptors.request.use((config) => {
+  const token = getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
+  return config;
+});
 
-  setToken(token) {
-    this.token = token;
-    localStorage.setItem('jwt_token', token);
-  }
-
-  clearToken() {
-    this.token = null;
-    localStorage.removeItem('jwt_token');
-  }
-
-  isAuthenticated() {
-    return !!this.token;
-  }
-
-  async request(method, endpoint, data = null) {
-    try {
-      const config = {
-        method,
-        url: endpoint,
-      };
-
-      if (data) {
-        config.data = data;
-      }
-
-      const response = await this.api.request(config);
-      return response.data;
-    } catch (error) {
-      throw this.handleError(error);
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      clearToken();
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
     }
+    return Promise.reject(error);
+  },
+);
+
+const toApiError = (error) => {
+  const apiError = new Error('An unexpected error occurred');
+
+  if (error.response) {
+    apiError.message = error.response.data?.error || 'An error occurred';
+    apiError.status = error.response.status;
+    apiError.errors = error.response.data?.messages || null;
+    return apiError;
   }
 
-  handleError(error) {
-    if (error.response) {
-      // Server responded with error status
-      return {
-        message: error.response.data?.error || 'An error occurred',
-        status: error.response.status,
-        errors: error.response.data?.messages || null,
-      };
-    } else if (error.request) {
-      // Network error
-      return {
-        message: 'Network error. Please check your connection.',
-        status: 0,
-      };
-    } else {
-      // Other error
-      return {
-        message: error.message || 'An unexpected error occurred',
-        status: 500,
-      };
-    }
+  if (error.request) {
+    apiError.message = 'Network error. Please check your connection.';
+    apiError.status = 0;
+    apiError.errors = null;
+    return apiError;
   }
 
-  // Authentication methods
-  async login(email, password) {
-    const response = await this.request('POST', '/auth/login', {
-      email,
-      password,
-    });
-    
-    if (response.access_token) {
-      this.setToken(response.access_token);
-    }
-    
-    return response;
+  apiError.message = error.message || apiError.message;
+  apiError.status = 500;
+  apiError.errors = null;
+  return apiError;
+};
+
+const request = async ({ method, url, data }) => {
+  try {
+    const response = await api.request({ method, url, data });
+    return response.data;
+  } catch (error) {
+    throw toApiError(error);
+  }
+};
+
+export const login = async ({ email, password }) => {
+  const response = await request({
+    method: 'POST',
+    url: '/auth/login',
+    data: { email, password },
+  });
+
+  if (response.access_token) {
+    setToken(response.access_token);
   }
 
-  logout() {
-    this.clearToken();
-  }
+  return response;
+};
 
-  // Quotation methods
-  async calculateQuotation(quotationData) {
-    return await this.request('POST', '/quotation', quotationData);
-  }
+export const logout = () => {
+  clearToken();
+};
 
-  // Health check
-  async healthCheck() {
-    return await this.request('GET', '/health');
-  }
-}
+export const calculateQuotation = (quotationData) =>
+  request({
+    method: 'POST',
+    url: '/quotation',
+    data: quotationData,
+  });
 
-// Create singleton instance
-const apiService = new ApiService();
+export const healthCheck = () => request({ method: 'GET', url: '/health' });
+
+const apiService = {
+  calculateQuotation,
+  clearToken,
+  getToken,
+  healthCheck,
+  isAuthenticated,
+  login,
+  logout,
+  setToken,
+};
+
 export default apiService;

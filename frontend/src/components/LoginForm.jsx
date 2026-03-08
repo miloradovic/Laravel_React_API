@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import apiService from '../services/apiService';
+import { useLoginMutation } from '../hooks/useApiMutations';
 
 const LoginForm = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
@@ -9,7 +9,8 @@ const LoginForm = ({ onLoginSuccess }) => {
   });
   
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
+  const loginMutation = useLoginMutation();
+  const loading = loginMutation.isPending;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,35 +55,27 @@ const LoginForm = ({ onLoginSuccess }) => {
       return;
     }
 
-    setLoading(true);
     setErrors({});
 
     try {
-      const response = await apiService.login(formData.email, formData.password);
-      console.log('Login successful:', response);
+      const response = await loginMutation.mutateAsync({
+        email: formData.email,
+        password: formData.password,
+      });
       onLoginSuccess(response);
     } catch (error) {
-      console.error('Login failed:', error);
       setErrors({
         general: error.message || 'Login failed. Please try again.'
       });
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <div className="card">
-      <h2 style={{ marginBottom: '24px', textAlign: 'center' }}>Login</h2>
+      <h2 className="section-title">Login</h2>
       
       {errors.general && (
-        <div style={{ 
-          color: '#dc2626', 
-          backgroundColor: '#fef2f2', 
-          padding: '12px', 
-          borderRadius: '4px', 
-          marginBottom: '16px' 
-        }}>
+        <div className="notice notice-error">
           {errors.general}
         </div>
       )}
@@ -124,21 +117,14 @@ const LoginForm = ({ onLoginSuccess }) => {
 
         <button
           type="submit"
-          className="btn btn-primary"
+          className="btn btn-primary w-full"
           disabled={loading}
-          style={{ width: '100%' }}
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>
 
-      <div style={{ 
-        marginTop: '20px', 
-        padding: '12px', 
-        backgroundColor: '#f3f4f6', 
-        borderRadius: '4px', 
-        fontSize: '14px' 
-      }}>
+      <div className="notice notice-neutral">
         <strong>Demo Credentials:</strong><br />
         Email: test@example.com<br />
         Password: password

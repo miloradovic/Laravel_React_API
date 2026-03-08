@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 
 const Results = ({ result, onNewQuotation }) => {
@@ -34,7 +33,7 @@ const Results = ({ result, onNewQuotation }) => {
 
   return (
     <div className="result-card">
-      <h3 style={{ textAlign: 'center', marginBottom: '20px', color: '#1f2937' }}>
+      <h3 className="result-title">
         Your Travel Insurance Quote
       </h3>
 
@@ -42,13 +41,12 @@ const Results = ({ result, onNewQuotation }) => {
         {formatCurrency(result.total, result.currency_id)}
       </div>
 
-      <div style={{ textAlign: 'center', color: '#6b7280', marginBottom: '24px' }}>
+      <div className="result-meta">
         Quotation ID: #{result.quotation_id}
       </div>
 
-      {/* Trip Details */}
-      <div style={{ marginBottom: '20px' }}>
-        <h4 style={{ color: '#374151', marginBottom: '12px' }}>Trip Details</h4>
+      <div className="result-section">
+        <h4 className="result-section-title">Trip Details</h4>
         <div className="breakdown">
           <div className="breakdown-item">
             <span>Trip Length:</span>
@@ -69,10 +67,9 @@ const Results = ({ result, onNewQuotation }) => {
         </div>
       </div>
 
-      {/* Pricing Breakdown */}
       {result.breakdown && result.breakdown.length > 0 && (
-        <div style={{ marginBottom: '20px' }}>
-          <h4 style={{ color: '#374151', marginBottom: '12px' }}>Pricing Breakdown</h4>
+        <div className="result-section">
+          <h4 className="result-section-title">Pricing Breakdown</h4>
           <div className="breakdown">
             {result.breakdown.map((item, index) => (
               <div key={index} className="breakdown-item">
@@ -80,7 +77,7 @@ const Results = ({ result, onNewQuotation }) => {
                 <span>{formatCurrency(item.subtotal, result.currency_id)}</span>
               </div>
             ))}
-            <div className="breakdown-item" style={{ borderTop: '2px solid #374151', paddingTop: '8px' }}>
+            <div className="breakdown-item breakdown-item-total">
               <span><strong>Total Premium:</strong></span>
               <span><strong>{formatCurrency(result.total, result.currency_id)}</strong></span>
             </div>
@@ -88,8 +85,7 @@ const Results = ({ result, onNewQuotation }) => {
         </div>
       )}
 
-      {/* Action Buttons */}
-      <div style={{ textAlign: 'center' }}>
+      <div className="result-actions">
         <button
           onClick={onNewQuotation}
           className="btn btn-primary"
@@ -98,15 +94,7 @@ const Results = ({ result, onNewQuotation }) => {
         </button>
       </div>
 
-      {/* Disclaimer */}
-      <div style={{ 
-        marginTop: '20px', 
-        padding: '12px', 
-        backgroundColor: '#fef3c7', 
-        borderRadius: '4px', 
-        fontSize: '12px',
-        color: '#92400e'
-      }}>
+      <div className="notice notice-warning result-disclaimer">
         <strong>Important:</strong> This is a sample quotation for demonstration purposes only. 
         Actual insurance terms, conditions, and pricing may vary.
       </div>
