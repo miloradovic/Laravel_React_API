@@ -1,17 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuotationMutation } from '../hooks/useApiMutations';
 
-const CURRENCIES = [
-  { code: 'EUR', name: 'Euro (EUR)' },
-  { code: 'GBP', name: 'British Pound (GBP)' },
-  { code: 'USD', name: 'US Dollar (USD)' },
-];
-
-const QuotationForm = ({ onQuotationResult }) => {
+const QuotationForm = ({ onQuotationResult, currencies, currenciesLoading }) => {
   const [formData, setFormData] = useState({
     ages: '',
-    currency_id: 'EUR',
+    currency_id: '',
     start_date: '',
     end_date: ''
   });
@@ -19,6 +13,17 @@ const QuotationForm = ({ onQuotationResult }) => {
   const [errors, setErrors] = useState({});
   const quotationMutation = useQuotationMutation();
   const loading = quotationMutation.isPending;
+
+  useEffect(() => {
+    if (!currencies.length || formData.currency_id) {
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      currency_id: currencies[0].code,
+    }));
+  }, [currencies, formData.currency_id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,6 +63,8 @@ const QuotationForm = ({ onQuotationResult }) => {
     // Currency validation
     if (!formData.currency_id) {
       newErrors.currency_id = 'Currency is required';
+    } else if (!currencies.some((currency) => currency.code === formData.currency_id)) {
+      newErrors.currency_id = 'Please select a valid currency';
     }
 
     // Start date validation
@@ -164,15 +171,18 @@ const QuotationForm = ({ onQuotationResult }) => {
             value={formData.currency_id}
             onChange={handleChange}
             className="form-select"
-            disabled={loading}
+            disabled={loading || currenciesLoading || currencies.length === 0}
           >
-            {CURRENCIES.map(currency => (
+            {currencies.map(currency => (
               <option key={currency.code} value={currency.code}>
-                {currency.name}
+                {currency.name} ({currency.code})
               </option>
             ))}
           </select>
           {errors.currency_id && <div className="error">{errors.currency_id}</div>}
+          {!currenciesLoading && currencies.length === 0 && (
+            <div className="error">No currencies are currently available.</div>
+          )}
         </div>
 
         <div className="form-group">
@@ -223,6 +233,18 @@ const QuotationForm = ({ onQuotationResult }) => {
 
 QuotationForm.propTypes = {
   onQuotationResult: PropTypes.func.isRequired,
+  currencies: PropTypes.arrayOf(
+    PropTypes.shape({
+      code: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      symbol: PropTypes.string,
+    })
+  ).isRequired,
+  currenciesLoading: PropTypes.bool,
+};
+
+QuotationForm.defaultProps = {
+  currenciesLoading: false,
 };
 
 export default QuotationForm;

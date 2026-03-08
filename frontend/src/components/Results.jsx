@@ -1,18 +1,15 @@
 import PropTypes from 'prop-types';
 
-const Results = ({ result, onNewQuotation }) => {
+const Results = ({ result, onNewQuotation, currencies }) => {
   if (!result) {
     return null;
   }
 
   const formatCurrency = (amount, currencyCode) => {
-    const symbols = {
-      'EUR': '€',
-      'GBP': '£',
-      'USD': '$'
-    };
-    
-    return `${symbols[currencyCode] || currencyCode} ${amount.toFixed(2)}`;
+    const matchedCurrency = currencies.find((currency) => currency.code === currencyCode);
+    const symbolOrCode = matchedCurrency?.symbol || currencyCode;
+
+    return `${symbolOrCode} ${amount.toFixed(2)}`;
   };
 
   const formatDate = (dateString) => {
@@ -123,6 +120,17 @@ Results.propTypes = {
     ),
   }),
   onNewQuotation: PropTypes.func.isRequired,
+  currencies: PropTypes.arrayOf(
+    PropTypes.shape({
+      code: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      symbol: PropTypes.string,
+    })
+  ),
+};
+
+Results.defaultProps = {
+  currencies: [],
 };
 
 export default Results;

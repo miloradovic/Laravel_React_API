@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Services\PricingService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class QuotationRequest extends FormRequest
 {
@@ -21,6 +23,11 @@ class QuotationRequest extends FormRequest
      */
     public function rules(): array
     {
+        $supportedCurrencyCodes = collect(app(PricingService::class)->getSupportedCurrencies())
+            ->pluck('code')
+            ->values()
+            ->all();
+
         return [
             'age' => [
                 'required',
@@ -36,7 +43,7 @@ class QuotationRequest extends FormRequest
                     }
                 },
             ],
-            'currency_id' => 'required|string|in:EUR,GBP,USD',
+            'currency_id' => ['required', 'string', Rule::in($supportedCurrencyCodes)],
             'start_date' => [
                 'required',
                 'date_format:Y-m-d',
@@ -57,11 +64,15 @@ class QuotationRequest extends FormRequest
      */
     public function messages(): array
     {
+        $supportedCurrencyCodes = collect(app(PricingService::class)->getSupportedCurrencies())
+            ->pluck('code')
+            ->implode(', ');
+
         return [
             'age.required' => 'Age is required',
             'age.regex' => 'Age must be in format "28" or "28,35" for multiple travelers',
             'currency_id.required' => 'Currency is required',
-            'currency_id.in' => 'Currency must be EUR, GBP, or USD',
+            'currency_id.in' => "Currency must be one of: {$supportedCurrencyCodes}",
             'start_date.required' => 'Start date is required',
             'start_date.date_format' => 'Start date must be in YYYY-MM-DD format',
             'start_date.after_or_equal' => 'Start date must be today or in the future',

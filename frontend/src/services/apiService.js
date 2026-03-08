@@ -97,11 +97,18 @@ export const calculateQuotation = (quotationData) =>
     data: quotationData,
   });
 
+export const getCurrencies = () =>
+  request({
+    method: 'GET',
+    url: '/quotation/currencies',
+  });
+
 export const healthCheck = () => request({ method: 'GET', url: '/health' });
 
 const apiService = {
   calculateQuotation,
   clearToken,
+  getCurrencies,
   getToken,
   healthCheck,
   isAuthenticated,

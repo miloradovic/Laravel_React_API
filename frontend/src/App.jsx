@@ -2,11 +2,17 @@ import { useState } from 'react';
 import LoginForm from './components/LoginForm';
 import QuotationForm from './components/QuotationForm';
 import Results from './components/Results';
+import { useCurrenciesQuery } from './hooks/useApiQueries';
 import { useAuthStatus } from './hooks/useAuthStatus';
 
 function App() {
   const [quotationResult, setQuotationResult] = useState(null);
   const { isAuthenticated, isCheckingAuth, logout, setIsAuthenticated } = useAuthStatus();
+  const {
+    data: currencies = [],
+    isLoading: isLoadingCurrencies,
+    error: currenciesError,
+  } = useCurrenciesQuery(isAuthenticated);
 
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
@@ -55,12 +61,23 @@ function App() {
         <LoginForm onLoginSuccess={handleLoginSuccess} />
       ) : (
         <>
+          {currenciesError && (
+            <div className="notice notice-error">
+              {currenciesError.message || 'Failed to load currencies.'}
+            </div>
+          )}
+
           {!quotationResult ? (
-            <QuotationForm onQuotationResult={handleQuotationResult} />
+            <QuotationForm
+              onQuotationResult={handleQuotationResult}
+              currencies={currencies}
+              currenciesLoading={isLoadingCurrencies}
+            />
           ) : (
             <Results 
               result={quotationResult} 
-              onNewQuotation={handleNewQuotation} 
+              onNewQuotation={handleNewQuotation}
+              currencies={currencies}
             />
           )}
         </>
