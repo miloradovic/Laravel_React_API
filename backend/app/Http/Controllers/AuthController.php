@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
@@ -13,7 +12,6 @@ class AuthController extends Controller
     /**
      * Login user and return JWT token
      *
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
@@ -27,7 +25,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'error' => 'Validation failed',
-                'messages' => $validator->errors()
+                'messages' => $validator->errors(),
             ], 422);
         }
 
@@ -36,14 +34,14 @@ class AuthController extends Controller
 
         // Attempt to create token
         try {
-            if (!$token = JWTAuth::attempt($credentials)) {
+            if (! $token = JWTAuth::attempt($credentials)) {
                 return response()->json([
-                    'error' => 'Invalid credentials'
+                    'error' => 'Invalid credentials',
                 ], 401);
             }
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Could not create token'
+                'error' => 'Could not create token',
             ], 500);
         }
 
@@ -51,7 +49,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60
+            'expires_in' => config('jwt.ttl') * 60,
         ]);
     }
 
@@ -66,7 +64,7 @@ class AuthController extends Controller
             [
                 'name' => 'Test User',
                 'email' => 'test@example.com',
-                'password' => bcrypt('password')
+                'password' => bcrypt('password'),
             ]
         );
 
@@ -75,8 +73,8 @@ class AuthController extends Controller
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
-                'email' => $user->email
-            ]
+                'email' => $user->email,
+            ],
         ]);
     }
 }

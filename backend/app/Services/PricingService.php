@@ -24,18 +24,12 @@ class PricingService
 
     /**
      * Calculate quotation based on ages, dates and currency
-     *
-     * @param array $ages
-     * @param string $startDate
-     * @param string $endDate
-     * @param string $currencyId
-     * @return array
      */
     public function calculateQuotation(array $ages, string $startDate, string $endDate, string $currencyId): array
     {
         // Calculate trip length (inclusive of both dates)
         $tripLength = $this->calculateTripLength($startDate, $endDate);
-        
+
         $total = 0;
         $breakdown = [];
 
@@ -48,7 +42,7 @@ class PricingService
             $breakdown[] = [
                 'age' => (int) $age,
                 'age_load' => $ageLoad,
-                'subtotal' => round($subtotal, 2)
+                'subtotal' => round($subtotal, 2),
             ];
         }
 
@@ -64,16 +58,12 @@ class PricingService
 
     /**
      * Calculate trip length in days (inclusive)
-     *
-     * @param string $startDate
-     * @param string $endDate
-     * @return int
      */
     private function calculateTripLength(string $startDate, string $endDate): int
     {
         $start = Carbon::createFromFormat('Y-m-d', $startDate);
         $end = Carbon::createFromFormat('Y-m-d', $endDate);
-        
+
         // Add 1 because both start and end dates are inclusive
         return $start->diffInDays($end) + 1;
     }
@@ -81,8 +71,6 @@ class PricingService
     /**
      * Get age load factor for given age
      *
-     * @param int $age
-     * @return float
      * @throws \InvalidArgumentException
      */
     private function getAgeLoad(int $age): float
@@ -98,9 +86,6 @@ class PricingService
 
     /**
      * Validate if age is within supported range
-     *
-     * @param int $age
-     * @return bool
      */
     public function isValidAge(int $age): bool
     {
@@ -109,8 +94,6 @@ class PricingService
 
     /**
      * Get all age load brackets for reference
-     *
-     * @return array
      */
     public function getAgeLoadTable(): array
     {
@@ -119,23 +102,22 @@ class PricingService
             $table[] = [
                 'min_age' => $minAge,
                 'max_age' => $maxAge,
-                'load_factor' => $load
+                'load_factor' => $load,
             ];
         }
+
         return $table;
     }
 
     /**
      * Get supported currencies
-     *
-     * @return array
      */
     public function getSupportedCurrencies(): array
     {
         return [
             ['code' => 'EUR', 'name' => 'Euro', 'symbol' => '€'],
             ['code' => 'GBP', 'name' => 'British Pound', 'symbol' => '£'],
-            ['code' => 'USD', 'name' => 'US Dollar', 'symbol' => '$']
+            ['code' => 'USD', 'name' => 'US Dollar', 'symbol' => '$'],
         ];
     }
 }

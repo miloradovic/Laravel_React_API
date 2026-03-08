@@ -34,19 +34,19 @@ class QuotationRequest extends FormRequest
                             $fail("Age {$ageInt} must be between 18 and 70");
                         }
                     }
-                }
+                },
             ],
             'currency_id' => 'required|string|in:EUR,GBP,USD',
             'start_date' => [
                 'required',
                 'date_format:Y-m-d',
-                'after_or_equal:today'
+                'after_or_equal:today',
             ],
             'end_date' => [
                 'required',
                 'date_format:Y-m-d',
-                'after:start_date'
-            ]
+                'after:start_date',
+            ],
         ];
     }
 
@@ -67,7 +67,7 @@ class QuotationRequest extends FormRequest
             'start_date.after_or_equal' => 'Start date must be today or in the future',
             'end_date.required' => 'End date is required',
             'end_date.date_format' => 'End date must be in YYYY-MM-DD format',
-            'end_date.after' => 'End date must be after start date'
+            'end_date.after' => 'End date must be after start date',
         ];
     }
 }

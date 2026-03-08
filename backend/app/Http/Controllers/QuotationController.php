@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Services\PricingService;
 use App\Http\Requests\QuotationRequest;
+use App\Services\PricingService;
 
 class QuotationController extends Controller
 {
@@ -18,7 +17,6 @@ class QuotationController extends Controller
     /**
      * Calculate travel insurance quotation
      *
-     * @param QuotationRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function calculate(QuotationRequest $request)
@@ -30,9 +28,9 @@ class QuotationController extends Controller
 
             // Validate each age
             foreach ($ages as $age) {
-                if (!$this->pricingService->isValidAge($age)) {
+                if (! $this->pricingService->isValidAge($age)) {
                     return response()->json([
-                        'error' => "Age {$age} is not within supported range (18-70)"
+                        'error' => "Age {$age} is not within supported range (18-70)",
                     ], 422);
                 }
             }
@@ -52,12 +50,12 @@ class QuotationController extends Controller
 
         } catch (\InvalidArgumentException $e) {
             return response()->json([
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 422);
 
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'An error occurred while calculating the quotation'
+                'error' => 'An error occurred while calculating the quotation',
             ], 500);
         }
     }
@@ -70,7 +68,7 @@ class QuotationController extends Controller
     public function getCurrencies()
     {
         return response()->json([
-            'currencies' => $this->pricingService->getSupportedCurrencies()
+            'currencies' => $this->pricingService->getSupportedCurrencies(),
         ]);
     }
 
@@ -83,7 +81,7 @@ class QuotationController extends Controller
     {
         return response()->json([
             'age_loads' => $this->pricingService->getAgeLoadTable(),
-            'fixed_rate' => PricingService::FIXED_RATE
+            'fixed_rate' => PricingService::FIXED_RATE,
         ]);
     }
 }

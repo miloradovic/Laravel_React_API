@@ -22,13 +22,13 @@ return Application::configure(basePath: dirname(__DIR__))
         // Global exception handling for API
         $exceptions->render(function (Exception $exception, $request) {
             if ($request->expectsJson()) {
-                $status = method_exists($exception, 'getStatusCode') 
-                    ? $exception->getStatusCode() 
+                $status = method_exists($exception, 'getStatusCode')
+                    ? $exception->getStatusCode()
                     : 500;
-                
+
                 return response()->json([
                     'error' => $exception->getMessage(),
-                    'status' => $status
+                    'status' => $status,
                 ], $status);
             }
         });
