@@ -12,6 +12,9 @@ frontend/.env.*
 # Laravel backend dependencies and runtime files
 backend/vendor/
 backend/node_modules/
+backend/database/*.sqlite
+backend/database/*.sqlite-shm
+backend/database/*.sqlite-wal
 backend/bootstrap/cache/*.php
 backend/bootstrap/cache/*.json
 backend/storage/*.key
