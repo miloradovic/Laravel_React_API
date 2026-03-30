@@ -1,7 +1,5 @@
 import axios from 'axios';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import type { LoginCredentials, LoginResponse } from '../features/auth/types';
-import type { CurrenciesResponse, QuotationPayload, QuotationResponse } from '../features/quotation/types';
 
 const TOKEN_STORAGE_KEY = 'jwt_token';
 
@@ -10,7 +8,7 @@ export interface ApiError extends Error {
   errors: unknown;
 }
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
   headers: {
     'Content-Type': 'application/json',
@@ -51,7 +49,7 @@ api.interceptors.response.use(
   },
 );
 
-const toApiError = (error: unknown): ApiError => {
+export const toApiError = (error: unknown): ApiError => {
   const apiError = new Error('An unexpected error occurred') as ApiError;
 
   if (axios.isAxiosError(error)) {
@@ -81,7 +79,7 @@ const toApiError = (error: unknown): ApiError => {
   return apiError;
 };
 
-const request = async <TResponse>({
+export const request = async <TResponse>({
   method,
   url,
   data,
@@ -97,36 +95,3 @@ const request = async <TResponse>({
     throw toApiError(error);
   }
 };
-
-export const login = async ({ email, password }: LoginCredentials) => {
-  const response = await request<LoginResponse>({
-    method: 'POST',
-    url: '/auth/login',
-    data: { email, password },
-  });
-
-  if (response.access_token) {
-    setToken(response.access_token);
-  }
-
-  return response;
-};
-
-export const logout = () => {
-  clearToken();
-};
-
-export const calculateQuotation = (quotationData: QuotationPayload) =>
-  request<QuotationResponse>({
-    method: 'POST',
-    url: '/quotation',
-    data: quotationData,
-  });
-
-export const getCurrencies = () =>
-  request<CurrenciesResponse>({
-    method: 'GET',
-    url: '/quotation/currencies',
-  });
-
-export const healthCheck = () => request({ method: 'GET', url: '/health' });

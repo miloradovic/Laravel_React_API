@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Currency } from '../features/quotation/types';
 import { queryKeys } from '../shared/react-query/queryKeys';
-import { getCurrencies } from '../services/apiService';
+import { getCurrencies } from '../services/quotationService';
 
 export const useCurrenciesQuery = (enabled = true) =>
   useQuery<Currency[]>({

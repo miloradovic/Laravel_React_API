@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useEffectEvent, useState } from 'react';
-import { healthCheck, isAuthenticated as hasToken, logout as clearAuth } from '../services/apiService';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { healthCheck } from '../services/healthService';
+import { isAuthenticated as hasToken } from '../services/apiClient';
+import { logout as clearAuth } from '../services/authService';
 
 const AUTH_UNAUTHORIZED_EVENT = 'auth:unauthorized';
 
@@ -13,9 +15,7 @@ export interface AuthStatusState {
 export const useAuthStatus = (): AuthStatusState => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const handleUnauthorized = useEffectEvent(() => {
-    setIsAuthenticated(false);
-  });
+  const setIsAuthenticatedRef = useRef(setIsAuthenticated);
 
   const logout = useCallback(() => {
     clearAuth();
@@ -56,7 +56,7 @@ export const useAuthStatus = (): AuthStatusState => {
 
     const handleUnauthorizedEvent = () => {
       if (!cancelled) {
-        handleUnauthorized();
+        setIsAuthenticatedRef.current(false);
       }
     };
 
@@ -67,7 +67,7 @@ export const useAuthStatus = (): AuthStatusState => {
       cancelled = true;
       window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorizedEvent);
     };
-  }, [handleUnauthorized, logout]);
+  }, [logout]);
 
   return {
     isAuthenticated,
