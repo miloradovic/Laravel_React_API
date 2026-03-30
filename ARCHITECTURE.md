@@ -57,7 +57,7 @@ graph TB
 #### 3. Pricing Calculation Service
 ```php
 class PricingService {
-    const FIXED_RATE = 3;
+    const RATE = 3;
     const AGE_LOADS = [
         '18-30' => 0.6,
         '31-40' => 0.7,

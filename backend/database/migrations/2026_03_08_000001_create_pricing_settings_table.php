@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('pricing_configs', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('version');
-            $table->decimal('fixed_rate', 10, 2);
+            $table->decimal('rate', 10, 2);
             $table->boolean('is_active')->default(false);
             $table->unsignedBigInteger('activated_by')->nullable();
             $table->timestamp('activated_at')->nullable();

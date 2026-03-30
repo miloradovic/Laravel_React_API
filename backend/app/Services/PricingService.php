@@ -34,7 +34,7 @@ class PricingService
 
         foreach ($ages as $age) {
             $bracket = $this->findBracket($config, $age);
-            $subtotal = $config->fixed_rate * $bracket->load_factor * $tripLength;
+            $subtotal = $config->rate * $bracket->load_factor * $tripLength;
             $total += $subtotal;
 
             $breakdown[] = [
@@ -115,11 +115,11 @@ class PricingService
     }
 
     /**
-     * Get the active fixed rate
+     * Get the active rate
      */
-    public function getFixedRate(): float
+    public function getRate(): float
     {
-        return PricingConfig::getActive()->fixed_rate;
+        return PricingConfig::getActive()->rate;
     }
 
     /**

@@ -21,7 +21,7 @@ class PricingConfigSeeder extends Seeder
         $config = PricingConfig::query()->updateOrCreate(
             ['version' => 1],
             [
-                'fixed_rate' => 3.00,
+                'rate' => 3.00,
                 'is_active' => true,
                 'activated_at' => now(),
             ]

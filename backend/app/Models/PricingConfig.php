@@ -19,7 +19,7 @@ class PricingConfig extends Model
 
     protected $fillable = [
         'version',
-        'fixed_rate',
+        'rate',
         'is_active',
         'activated_by',
         'activated_at',
@@ -28,7 +28,7 @@ class PricingConfig extends Model
     protected function casts(): array
     {
         return [
-            'fixed_rate' => 'float',
+            'rate' => 'float',
             'is_active' => 'boolean',
             'activated_at' => 'datetime',
         ];

@@ -55,7 +55,7 @@ class QuotationController extends Controller
     {
         return new AgeLoadsResource([
             'age_loads' => $this->pricingService->getAgeLoadTable(),
-            'fixed_rate' => $this->pricingService->getFixedRate(),
+            'rate' => $this->pricingService->getRate(),
         ]);
     }
 }

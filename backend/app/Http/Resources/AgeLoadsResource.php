@@ -17,16 +17,16 @@ class AgeLoadsResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array{age_loads: list<array{min_age: int, max_age: int, load_factor: float}>, fixed_rate: float}
+     * @return array{age_loads: list<array{min_age: int, max_age: int, load_factor: float}>, rate: float}
      */
     public function toArray(Request $request): array
     {
-        /** @var array{age_loads?: list<array{min_age: int, max_age: int, load_factor: float}>, fixed_rate?: float} $result */
+        /** @var array{age_loads?: list<array{min_age: int, max_age: int, load_factor: float}>, rate?: float} $result */
         $result = (array) $this->resource;
 
         return [
             'age_loads' => (array) ($result['age_loads'] ?? []),
-            'fixed_rate' => (float) ($result['fixed_rate'] ?? 0.0),
+            'rate' => (float) ($result['rate'] ?? 0.0),
         ];
     }
 }
