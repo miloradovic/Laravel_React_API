@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\AgeLoadBracket;
+use App\Models\Currency;
 use App\Models\PricingConfig;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -42,6 +43,19 @@ class DatabaseSeeder extends Seeder
                     'max_age' => $bracket['max_age'],
                 ],
                 $bracket
+            );
+        }
+
+        $currencies = [
+            ['code' => 'EUR', 'name' => 'Euro', 'symbol' => '€', 'is_active' => true],
+            ['code' => 'GBP', 'name' => 'British Pound', 'symbol' => '£', 'is_active' => true],
+            ['code' => 'USD', 'name' => 'US Dollar', 'symbol' => '$', 'is_active' => true],
+        ];
+
+        foreach ($currencies as $currency) {
+            Currency::updateOrCreate(
+                ['code' => $currency['code']],
+                $currency
             );
         }
 

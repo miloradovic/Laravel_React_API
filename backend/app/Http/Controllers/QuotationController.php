@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\QuotationRequest;
+use App\Http\Resources\CurrencyResource;
 use App\Services\PricingService;
 use Illuminate\Http\JsonResponse;
 
@@ -69,7 +70,7 @@ class QuotationController extends Controller
     public function getCurrencies()
     {
         return response()->json([
-            'currencies' => $this->pricingService->getSupportedCurrencies(),
+            'currencies' => CurrencyResource::collection($this->pricingService->getSupportedCurrencies())->resolve(),
         ]);
     }
 

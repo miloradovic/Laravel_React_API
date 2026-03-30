@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Models\AgeLoadBracket;
+use App\Models\Currency;
 use App\Models\PricingConfig;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 
 class PricingService
 {
@@ -121,14 +123,25 @@ class PricingService
     /**
      * Get supported currencies
      *
-     * @return list<array{code: string, name: string, symbol: string}>
+     * @return Collection<int, Currency>
      */
-    public function getSupportedCurrencies(): array
+    public function getSupportedCurrencies(): Collection
     {
-        return [
-            ['code' => 'EUR', 'name' => 'Euro', 'symbol' => '€'],
-            ['code' => 'GBP', 'name' => 'British Pound', 'symbol' => '£'],
-            ['code' => 'USD', 'name' => 'US Dollar', 'symbol' => '$'],
-        ];
+        return Currency::query()
+            ->active()
+            ->orderBy('code')
+            ->get(['code', 'name', 'symbol']);
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getSupportedCurrencyCodes(): array
+    {
+        return Currency::query()
+            ->active()
+            ->orderBy('code')
+            ->pluck('code')
+            ->all();
     }
 }

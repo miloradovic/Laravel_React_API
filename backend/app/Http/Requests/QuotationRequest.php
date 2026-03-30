@@ -95,12 +95,7 @@ class QuotationRequest extends FormRequest
             return $this->supportedCurrencyCodes;
         }
 
-        $currencies = $this->pricingService()->getSupportedCurrencies();
-
-        $this->supportedCurrencyCodes = array_map(
-            static fn (array $currency) => $currency['code'],
-            $currencies
-        );
+        $this->supportedCurrencyCodes = $this->pricingService()->getSupportedCurrencyCodes();
 
         return $this->supportedCurrencyCodes;
     }
