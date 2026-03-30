@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\QuotationRequest;
-use App\Http\Resources\CurrencyResource;
+use App\Http\Resources\AgeLoadsResource;
+use App\Http\Resources\CurrenciesResource;
+use App\Http\Resources\QuotationResource;
 use App\Services\PricingService;
-use Illuminate\Http\JsonResponse;
 
 class QuotationController extends Controller
 {
@@ -19,69 +20,40 @@ class QuotationController extends Controller
     /**
      * Calculate travel insurance quotation
      *
-     * @return JsonResponse
+     * @return QuotationResource
      */
     public function calculate(QuotationRequest $request)
     {
-        try {
-            // Parse ages from comma-separated string
-            $agesString = $request->input('age');
-            $ages = array_map('intval', explode(',', $agesString));
+        $data = $request->validated();
 
-            // Validate each age
-            foreach ($ages as $age) {
-                if (! $this->pricingService->isValidAge($age)) {
-                    return response()->json([
-                        'error' => "Age {$age} is not within supported range (18-70)",
-                    ], 422);
-                }
-            }
+        $result = $this->pricingService->calculateQuotation(
+            $request->ages(),
+            $data['start_date'],
+            $data['end_date'],
+            $data['currency_id']
+        );
 
-            // Calculate quotation
-            $result = $this->pricingService->calculateQuotation(
-                $ages,
-                $request->input('start_date'),
-                $request->input('end_date'),
-                $request->input('currency_id')
-            );
-
-            // Add quotation ID (in real app, this would be saved to database)
-            $result['quotation_id'] = rand(1000, 9999);
-
-            return response()->json($result);
-
-        } catch (\InvalidArgumentException $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 422);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'An error occurred while calculating the quotation',
-            ], 500);
-        }
+        return new QuotationResource($result);
     }
 
     /**
      * Get available currencies
      *
-     * @return JsonResponse
+     * @return CurrenciesResource
      */
     public function getCurrencies()
     {
-        return response()->json([
-            'currencies' => CurrencyResource::collection($this->pricingService->getSupportedCurrencies())->resolve(),
-        ]);
+        return new CurrenciesResource($this->pricingService->getSupportedCurrencies());
     }
 
     /**
      * Get age load table
      *
-     * @return JsonResponse
+     * @return AgeLoadsResource
      */
     public function getAgeLoads()
     {
-        return response()->json([
+        return new AgeLoadsResource([
             'age_loads' => $this->pricingService->getAgeLoadTable(),
             'fixed_rate' => $this->pricingService->getFixedRate(),
         ]);

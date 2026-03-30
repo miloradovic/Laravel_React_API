@@ -15,6 +15,7 @@ class PricingService
      *
      * @param  list<int>  $ages
      * @return array{
+     *   quotation_id: int,
      *   total: float,
      *   currency_id: string,
      *   trip_length: int,
@@ -44,6 +45,7 @@ class PricingService
         }
 
         return [
+            'quotation_id' => random_int(1000, 9999),
             'total' => round($total, 2),
             'currency_id' => $currencyId,
             'trip_length' => $tripLength,
@@ -131,17 +133,5 @@ class PricingService
             ->active()
             ->orderBy('code')
             ->get(['code', 'name', 'symbol']);
-    }
-
-    /**
-     * @return list<string>
-     */
-    public function getSupportedCurrencyCodes(): array
-    {
-        return Currency::query()
-            ->active()
-            ->orderBy('code')
-            ->pluck('code')
-            ->all();
     }
 }

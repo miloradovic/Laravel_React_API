@@ -2,17 +2,13 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidAges;
 use App\Services\PricingService;
-use Closure;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class QuotationRequest extends FormRequest
 {
-    /** @var array<int, string>|null */
-    private ?array $supportedCurrencyCodes = null;
-
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -24,19 +20,24 @@ class QuotationRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, array<mixed>|string>
      */
-    public function rules(): array
+    public function rules(PricingService $pricingService): array
     {
         return [
             'age' => [
                 'bail',
                 'required',
                 'string',
-                fn (string $attribute, string $value, Closure $fail) => $this->validateCommaSeparatedIntegers($value, $fail),
-                fn (string $attribute, string $value, Closure $fail) => $this->validateAgeBrackets($value, $fail),
+                new ValidAges($pricingService),
             ],
-            'currency_id' => ['required', 'string', Rule::in($this->getSupportedCurrencyCodes())],
+            'currency_id' => [
+                'required',
+                'string',
+                Rule::exists('currencies', 'code')->where(
+                    static fn ($query) => $query->where('is_active', true)
+                ),
+            ],
             'start_date' => [
                 'required',
                 'date_format:Y-m-d',
@@ -57,12 +58,10 @@ class QuotationRequest extends FormRequest
      */
     public function messages(): array
     {
-        $supportedCurrencyCodes = implode(', ', $this->getSupportedCurrencyCodes());
-
         return [
             'age.required' => 'Age is required',
             'currency_id.required' => 'Currency is required',
-            'currency_id.in' => "Currency must be one of: {$supportedCurrencyCodes}",
+            'currency_id.exists' => 'Currency must be supported',
             'start_date.required' => 'Start date is required',
             'start_date.date_format' => 'Start date must be in YYYY-MM-DD format',
             'start_date.after_or_equal' => 'Start date must be today or in the future',
@@ -87,54 +86,12 @@ class QuotationRequest extends FormRequest
     }
 
     /**
-     * @return array<int, string>
+     * @return list<int>
      */
-    private function getSupportedCurrencyCodes(): array
+    public function ages(): array
     {
-        if ($this->supportedCurrencyCodes !== null) {
-            return $this->supportedCurrencyCodes;
-        }
+        $ageList = (string) $this->validated('age');
 
-        $this->supportedCurrencyCodes = $this->pricingService()->getSupportedCurrencyCodes();
-
-        return $this->supportedCurrencyCodes;
-    }
-
-    private function validateAgeBrackets(string $ageList, Closure $fail): void
-    {
-        $pricingService = $this->pricingService();
-
-        foreach ($this->parseAges($ageList) as $age) {
-            if (! $pricingService->isValidAge($age)) {
-                $fail("Age {$age} is not within any supported age bracket");
-            }
-        }
-    }
-
-    private function validateCommaSeparatedIntegers(string $value, Closure $fail): void
-    {
-        foreach (explode(',', $value) as $segment) {
-            if ($segment === '' || ! ctype_digit($segment)) {
-                $fail('Age must contain only integers separated by commas');
-
-                return;
-            }
-        }
-    }
-
-    /**
-     * @return array<int, int>
-     */
-    private function parseAges(string $ageList): array
-    {
-        return array_map(
-            static fn (string $age) => (int) trim($age),
-            explode(',', $ageList)
-        );
-    }
-
-    private function pricingService(): PricingService
-    {
-        return new PricingService;
+        return array_map('intval', explode(',', $ageList));
     }
 }
