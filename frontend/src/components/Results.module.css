@@ -1,0 +1,95 @@
+.card {
+  background: #f8fbff;
+  border: 1px solid #dbe7f4;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.total {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.meta {
+  text-align: center;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  color: #314154;
+  margin-bottom: 12px;
+}
+
+.breakdown {
+  margin-top: 16px;
+}
+
+.breakdownItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.breakdownItem:last-child {
+  border-bottom: none;
+  font-weight: bold;
+}
+
+.breakdownItemTotal {
+  border-top: 2px solid #314154;
+  padding-top: 8px;
+}
+
+.actions {
+  text-align: center;
+}
+
+.actionButton {
+  width: 100%;
+  max-width: 360px;
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s;
+  text-decoration: none;
+  text-align: center;
+  background-color: var(--brand);
+  color: #ffffff;
+}
+
+.actionButton:hover {
+  transform: translateY(-1px);
+  background-color: var(--brand-strong);
+}
+
+.disclaimer {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  background-color: var(--warn-bg);
+  color: var(--warn-text);
+}

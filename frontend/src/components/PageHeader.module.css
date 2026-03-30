@@ -1,0 +1,17 @@
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: var(--muted);
+}
+
+.actions {
+  margin-top: 16px;
+}

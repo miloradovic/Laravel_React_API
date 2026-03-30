@@ -1,0 +1,44 @@
+.shell {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.logoutButton {
+  display: inline-block;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s;
+  text-decoration: none;
+  text-align: center;
+  padding: 6px 12px;
+  background-color: #5f6876;
+  color: #ffffff;
+}
+
+.logoutButton:hover {
+  transform: translateY(-1px);
+  background-color: #4d5561;
+}
+
+.content {
+  min-height: 300px;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 14px;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 768px) {
+  .shell {
+    padding: 16px;
+  }
+}

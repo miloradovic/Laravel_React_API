@@ -1,0 +1,116 @@
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 8px 22px rgba(13, 21, 42, 0.06);
+  margin-bottom: 20px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sectionTitle {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.form {
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: #314154;
+}
+
+.formInput,
+.formSelect {
+  width: 100%;
+  max-width: 360px;
+  padding: 10px 12px;
+  border: 1px solid #c8d3df;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.formInput {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.16);
+}
+
+.formSelect {
+  background-color: var(--surface);
+}
+
+.error {
+  color: var(--error-text);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.formHelpText {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.noticeError {
+  margin-top: 20px;
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--error-text);
+  background-color: var(--error-bg);
+}
+
+.submitButton {
+  width: 100%;
+  max-width: 360px;
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s;
+  text-decoration: none;
+  text-align: center;
+  background-color: var(--brand);
+  color: #ffffff;
+}
+
+.submitButton:hover {
+  transform: translateY(-1px);
+  background-color: var(--brand-strong);
+}
+
+.submitButton:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.submitButton:disabled:hover {
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 16px;
+  }
+}
