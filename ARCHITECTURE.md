@@ -201,7 +201,7 @@ Total = 54 + 63 = 117.00
 
 ### Backend Requirements
 - PHP 8.4
-- Laravel 12.x
+- Laravel 13.x
 - MySQL/PostgreSQL
 - Composer
 

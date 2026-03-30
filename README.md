@@ -2,7 +2,7 @@
 
 Pick your travel dates, add travelers, get a price. That's it — no forms to fill for ten minutes, no mystery fees.
 
-This is a full-stack app built with a **Laravel 12 REST API** and a **React 18** frontend. You log in, submit a trip, and instantly get a breakdown of what insurance would cost for each traveler based on their age and the trip length.
+This is a full-stack app built with a **Laravel 13 REST API** and a **React 19** frontend. You log in, submit a trip, and instantly get a breakdown of what insurance would cost for each traveler based on their age and the trip length.
 
 > Built as a coding challenge. Not for sale, not for production — just genuinely fun to run locally.
 
@@ -53,8 +53,8 @@ The script builds the containers, generates all keys, and runs migrations. Once 
 
 | Layer       | Technology                              |
 |-------------|-----------------------------------------|
-| Backend     | Laravel 12, PHP 8.4, SQLite, JWT auth   |
-| Frontend    | React 18, Vite, Axios                   |
+| Backend     | Laravel 13, PHP 8.4, SQLite, JWT auth   |
+| Frontend    | React 19, Vite, Axios                   |
 | Dev env     | Docker Compose, Alpine Linux containers |
 
 ---

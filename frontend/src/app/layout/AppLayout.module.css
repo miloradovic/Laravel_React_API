@@ -28,15 +28,6 @@
   min-height: 300px;
 }
 
-.footer {
-  text-align: center;
-  margin-top: 40px;
-  padding: 20px;
-  color: var(--muted);
-  font-size: 14px;
-  border-top: 1px solid var(--line);
-}
-
 @media (max-width: 768px) {
   .shell {
     padding: 16px;

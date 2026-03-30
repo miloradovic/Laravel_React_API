@@ -31,7 +31,7 @@ docker compose exec backend php artisan db:seed --force
 
 ## Services Overview
 
-### Backend (Laravel 12 + PHP 8.4)
+### Backend (Laravel 13 + PHP 8.4)
 - **Port:** 8000
 - **Database:** SQLite (file-based)
 - **Authentication:** JWT tokens
@@ -233,7 +233,7 @@ docker compose logs -f frontend
 
 ## Technology Stack
 
-- **Backend:** Laravel 12, PHP 8.4, SQLite, JWT Auth
+- **Backend:** Laravel 13, PHP 8.4, SQLite, JWT Auth
 - **Frontend:** React 19.2, Vite, Axios
 - **Infrastructure:** Docker, Docker Compose
 - **Styling:** Custom CSS (no frameworks)
