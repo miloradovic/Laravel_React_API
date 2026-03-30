@@ -3,12 +3,9 @@ FROM php:8.4-fpm-alpine
 # Install only the system packages required for this local API setup.
 RUN apk add --no-cache \
     curl \
-    git \
     oniguruma-dev \
-    sqlite \
     sqlite-dev \
-    unzip \
-    zip
+    unzip
 
 RUN docker-php-ext-install pdo pdo_sqlite mbstring bcmath pcntl
 
