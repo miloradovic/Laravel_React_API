@@ -15,12 +15,12 @@ This is a full-stack app built with a **Laravel 13 REST API** and a **React 19**
 The price logic is transparent: `price = 3 per day × age multiplier`. Younger travelers pay less. No black box.
 
 | Age range | Multiplier |
-|-----------|-----------|
-| 18–30     | 0.6       |
-| 31–40     | 0.7       |
-| 41–50     | 0.8       |
-| 51–60     | 0.9       |
-| 61–70     | 1.0       |
+|-----------|------------|
+| 18–30     | 0.6        |
+| 31–40     | 0.7        |
+| 41–50     | 0.8        |
+| 51–60     | 0.9        |
+| 61–70     | 1.0        |
 
 **Example:** Two travelers (28 and 35 years old) on a 30-day trip → `(3×0.6×30) + (3×0.7×30) = 117.00 EUR`
 
