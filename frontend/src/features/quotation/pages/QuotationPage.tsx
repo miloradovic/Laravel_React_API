@@ -3,6 +3,7 @@ import QuotationForm from '../../../components/QuotationForm';
 import Results from '../../../components/Results';
 import type { QuotationResponse } from '../types';
 import { useCurrenciesQuery } from '../../../hooks/useApiQueries';
+import { useCircuitBreaker } from '../../../hooks/useCircuitBreaker';
 import styles from './QuotationPage.module.css';
 
 const QuotationPage = () => {
@@ -12,6 +13,8 @@ const QuotationPage = () => {
     isLoading: isLoadingCurrencies,
     error: currenciesError,
   } = useCurrenciesQuery(true);
+
+  const { circuitState } = useCircuitBreaker();
 
   const handleQuotationResult = (result: QuotationResponse) => {
     startTransition(() => {
@@ -38,6 +41,7 @@ const QuotationPage = () => {
           onQuotationResult={handleQuotationResult}
           currencies={currencies}
           currenciesLoading={isLoadingCurrencies}
+          circuitState={circuitState}
         />
       ) : (
         <Results result={quotationResult} onNewQuotation={handleNewQuotation} currencies={currencies} />

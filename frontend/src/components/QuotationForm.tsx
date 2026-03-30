@@ -9,22 +9,26 @@ import {
   type QuotationFormValues,
 } from '../features/quotation/validation';
 import { useQuotationMutation } from '../hooks/useApiMutations';
+import type { CircuitState } from '../hooks/useCircuitBreaker';
 import styles from './QuotationForm.module.css';
 
 interface QuotationFormProps {
   onQuotationResult: (result: QuotationResponse) => void;
   currencies: Currency[];
   currenciesLoading?: boolean;
+  circuitState?: CircuitState;
 }
 
 const QuotationForm = ({
   onQuotationResult,
   currencies,
   currenciesLoading = false,
+  circuitState = 'closed',
 }: QuotationFormProps) => {
   const [generalError, setGeneralError] = useState<string | null>(null);
   const quotationMutation = useQuotationMutation();
   const loading = quotationMutation.isPending;
+  const circuitOpen = circuitState === 'open';
   const todayDate = getTodayDateInputValue();
   const {
     register,
@@ -91,6 +95,18 @@ const QuotationForm = ({
     <div className={styles.card}>
       <h2 className={styles.sectionTitle}>Travel Insurance Quotation</h2>
 
+      {circuitState === 'open' && (
+        <div className={styles.noticeCircuitOpen} role="alert">
+          Backend service is unavailable. Please come back later.
+        </div>
+      )}
+
+      {circuitState === 'half-open' && (
+        <div className={styles.noticeWarning} role="status">
+          Backend service may be experiencing issues...
+        </div>
+      )}
+
       {generalError && (
         <div className={styles.noticeError} role="alert">
           {generalError}
@@ -110,7 +126,7 @@ const QuotationForm = ({
             inputMode="numeric"
             aria-invalid={Boolean(errors.ages)}
             aria-describedby={[agesHelpId, agesErrorId].filter(Boolean).join(' ') || undefined}
-            disabled={loading}
+            disabled={loading || circuitOpen}
             {...agesField}
           />
           {errors.ages && (
@@ -132,7 +148,7 @@ const QuotationForm = ({
             className={styles.formSelect}
             aria-invalid={Boolean(errors.currency_id)}
             aria-describedby={currencyErrorId}
-            disabled={loading || currenciesLoading || currencies.length === 0}
+            disabled={loading || currenciesLoading || currencies.length === 0 || circuitOpen}
             {...currencyField}
           >
             {currencies.map((currency) => (
@@ -162,7 +178,7 @@ const QuotationForm = ({
             min={todayDate}
             aria-invalid={Boolean(errors.start_date)}
             aria-describedby={startDateErrorId}
-            disabled={loading}
+            disabled={loading || circuitOpen}
             {...startDateField}
           />
           {errors.start_date && (
@@ -183,7 +199,7 @@ const QuotationForm = ({
             min={watchedStartDate || todayDate}
             aria-invalid={Boolean(errors.end_date)}
             aria-describedby={endDateErrorId}
-            disabled={loading}
+            disabled={loading || circuitOpen}
             {...endDateField}
           />
           {errors.end_date && (
@@ -196,7 +212,7 @@ const QuotationForm = ({
         <button
           type="submit"
           className={styles.submitButton}
-          disabled={loading || currenciesLoading || currencies.length === 0}
+          disabled={loading || currenciesLoading || currencies.length === 0 || circuitOpen}
         >
           {loading ? 'Calculating...' : 'Get Quotation'}
         </button>

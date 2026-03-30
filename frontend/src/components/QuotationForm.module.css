@@ -78,6 +78,28 @@
   background-color: var(--error-bg);
 }
 
+.noticeWarning {
+  margin-top: 20px;
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #92400e;
+  background-color: #fef3c7;
+  border: 1px solid #f59e0b;
+}
+
+.noticeCircuitOpen {
+  margin-top: 20px;
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--error-text);
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-text);
+}
+
 .submitButton {
   width: 100%;
   max-width: 360px;
