@@ -9,6 +9,11 @@ frontend/.env
 frontend/.env.*
 !frontend/.env.example
 
+# SQLite database artifacts
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
 # Laravel backend dependencies and runtime files
 backend/vendor/
 backend/node_modules/

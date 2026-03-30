@@ -3,11 +3,14 @@
 namespace App\Http\Requests;
 
 use App\Services\PricingService;
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class QuotationRequest extends FormRequest
 {
+    private ?array $supportedCurrencyCodes = null;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -23,27 +26,15 @@ class QuotationRequest extends FormRequest
      */
     public function rules(): array
     {
-        $supportedCurrencyCodes = collect(app(PricingService::class)->getSupportedCurrencies())
-            ->pluck('code')
-            ->values()
-            ->all();
-
         return [
             'age' => [
+                'bail',
                 'required',
                 'string',
-                'regex:/^(\d{1,2})(,\d{1,2})*$/', // Comma-separated ages like "28,35"
-                function ($attribute, $value, $fail) {
-                    $ages = explode(',', $value);
-                    foreach ($ages as $age) {
-                        $ageInt = (int) trim($age);
-                        if ($ageInt < 18 || $ageInt > 70) {
-                            $fail("Age {$ageInt} must be between 18 and 70");
-                        }
-                    }
-                },
+                fn (string $attribute, string $value, Closure $fail) => $this->validateCommaSeparatedIntegers($value, $fail),
+                fn (string $attribute, string $value, Closure $fail) => $this->validateAgeBrackets($value, $fail),
             ],
-            'currency_id' => ['required', 'string', Rule::in($supportedCurrencyCodes)],
+            'currency_id' => ['required', 'string', Rule::in($this->getSupportedCurrencyCodes())],
             'start_date' => [
                 'required',
                 'date_format:Y-m-d',
@@ -64,13 +55,10 @@ class QuotationRequest extends FormRequest
      */
     public function messages(): array
     {
-        $supportedCurrencyCodes = collect(app(PricingService::class)->getSupportedCurrencies())
-            ->pluck('code')
-            ->implode(', ');
+        $supportedCurrencyCodes = implode(', ', $this->getSupportedCurrencyCodes());
 
         return [
             'age.required' => 'Age is required',
-            'age.regex' => 'Age must be in format "28" or "28,35" for multiple travelers',
             'currency_id.required' => 'Currency is required',
             'currency_id.in' => "Currency must be one of: {$supportedCurrencyCodes}",
             'start_date.required' => 'Start date is required',
@@ -80,5 +68,76 @@ class QuotationRequest extends FormRequest
             'end_date.date_format' => 'End date must be in YYYY-MM-DD format',
             'end_date.after' => 'End date must be after start date',
         ];
+    }
+
+    /**
+     * Normalize common fields before validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $age = $this->input('age');
+        $currencyId = $this->input('currency_id');
+
+        $this->merge([
+            'age' => is_string($age) ? preg_replace('/\s+/', '', $age) : $age,
+            'currency_id' => is_string($currencyId) ? strtoupper(trim($currencyId)) : $currencyId,
+        ]);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function getSupportedCurrencyCodes(): array
+    {
+        if ($this->supportedCurrencyCodes !== null) {
+            return $this->supportedCurrencyCodes;
+        }
+
+        $currencies = $this->pricingService()->getSupportedCurrencies();
+
+        $this->supportedCurrencyCodes = array_values(array_map(
+            static fn (array $currency) => $currency['code'],
+            $currencies
+        ));
+
+        return $this->supportedCurrencyCodes;
+    }
+
+    private function validateAgeBrackets(string $ageList, Closure $fail): void
+    {
+        $pricingService = $this->pricingService();
+
+        foreach ($this->parseAges($ageList) as $age) {
+            if (! $pricingService->isValidAge($age)) {
+                $fail("Age {$age} is not within any supported age bracket");
+            }
+        }
+    }
+
+    private function validateCommaSeparatedIntegers(string $value, Closure $fail): void
+    {
+        foreach (explode(',', $value) as $segment) {
+            if ($segment === '' || ! ctype_digit($segment)) {
+                $fail('Age must contain only integers separated by commas');
+
+                return;
+            }
+        }
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    private function parseAges(string $ageList): array
+    {
+        return array_values(array_map(
+            static fn (string $age) => (int) trim($age),
+            explode(',', $ageList)
+        ));
+    }
+
+    private function pricingService(): PricingService
+    {
+        return new PricingService();
     }
 }

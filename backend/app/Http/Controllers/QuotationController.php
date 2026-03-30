@@ -81,7 +81,7 @@ class QuotationController extends Controller
     {
         return response()->json([
             'age_loads' => $this->pricingService->getAgeLoadTable(),
-            'fixed_rate' => PricingService::FIXED_RATE,
+            'fixed_rate' => $this->pricingService->getFixedRate(),
         ]);
     }
 }
