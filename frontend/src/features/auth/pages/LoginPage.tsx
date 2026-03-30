@@ -1,8 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PageFooter from '../../../components/PageFooter';
 import LoginForm from '../../../components/LoginForm';
-import PageHeader from '../../../components/PageHeader';
 import layoutStyles from '../../../app/layout/AppLayout.module.css';
 import { useAuth } from '../AuthContext';
 
@@ -23,13 +21,19 @@ const LoginPage = () => {
 
   return (
     <div className={layoutStyles.shell}>
-      <PageHeader />
+      <header className={layoutStyles.header}>
+        <h1 className={layoutStyles.title}>Travel Insurance Quotation System</h1>
+        <p className={layoutStyles.subtitle}>Get instant quotes for your travel insurance needs</p>
+      </header>
 
       <main className={layoutStyles.content}>
         <LoginForm onLoginSuccess={handleLoginSuccess} />
       </main>
 
-      <PageFooter />
+      <footer className={layoutStyles.footer}>
+        <p>Travel Insurance Quotation Demo System</p>
+        <p>Built with Laravel 13 + React 19 + Vite</p>
+      </footer>
     </div>
   );
 };

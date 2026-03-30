@@ -1,6 +1,4 @@
 import { Outlet } from 'react-router-dom';
-import PageFooter from '../../components/PageFooter';
-import PageHeader from '../../components/PageHeader';
 import { useAuth } from '../../features/auth/AuthContext';
 import styles from './AppLayout.module.css';
 
@@ -9,19 +7,24 @@ const AppLayout = () => {
 
   return (
     <div className={styles.shell}>
-      <PageHeader
-        actions={
+      <header className={styles.header}>
+        <h1 className={styles.title}>Travel Insurance Quotation System</h1>
+        <p className={styles.subtitle}>Get instant quotes for your travel insurance needs</p>
+        <div className={styles.actions}>
           <button onClick={logout} className={styles.logoutButton}>
             Logout
           </button>
-        }
-      />
+        </div>
+      </header>
 
       <main className={styles.content}>
         <Outlet />
       </main>
 
-      <PageFooter />
+      <footer className={styles.footer}>
+        <p>Travel Insurance Quotation Demo System</p>
+        <p>Built with Laravel 13 + React 19 + Vite</p>
+      </footer>
     </div>
   );
 };
