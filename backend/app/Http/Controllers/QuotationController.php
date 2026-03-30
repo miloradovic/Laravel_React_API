@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\QuotationRequest;
 use App\Services\PricingService;
+use Illuminate\Http\JsonResponse;
 
 class QuotationController extends Controller
 {
@@ -17,7 +18,7 @@ class QuotationController extends Controller
     /**
      * Calculate travel insurance quotation
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function calculate(QuotationRequest $request)
     {
@@ -63,7 +64,7 @@ class QuotationController extends Controller
     /**
      * Get available currencies
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getCurrencies()
     {
@@ -75,7 +76,7 @@ class QuotationController extends Controller
     /**
      * Get age load table
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getAgeLoads()
     {

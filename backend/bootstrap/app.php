@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Tymon\JWTAuth\Http\Middleware\Authenticate;
+use Tymon\JWTAuth\Http\Middleware\RefreshToken;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -14,8 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // Add JWT middleware alias
         $middleware->alias([
-            'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
-            'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
+            'jwt.auth' => Authenticate::class,
+            'jwt.refresh' => RefreshToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

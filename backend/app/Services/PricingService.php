@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AgeLoadBracket;
 use App\Models\PricingConfig;
 use Carbon\Carbon;
 
@@ -56,7 +57,7 @@ class PricingService
      *
      * @throws \InvalidArgumentException
      */
-    private function findBracket(PricingConfig $config, int $age): \App\Models\AgeLoadBracket
+    private function findBracket(PricingConfig $config, int $age): AgeLoadBracket
     {
         foreach ($config->brackets as $bracket) {
             if ($age >= $bracket->min_age && $age <= $bracket->max_age) {

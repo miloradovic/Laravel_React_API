@@ -1,0 +1,15 @@
+includes:
+    - vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - routes
+        - database
+    level: 6
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+
+    ignoreErrors:
+        # Laravel container helpers sometimes resolve mixed types at analysis time.
+        - '#Cannot access property \$\w+ on mixed#'
