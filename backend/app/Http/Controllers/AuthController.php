@@ -58,7 +58,7 @@ class AuthController extends Controller
      * Create a test user for the system
      * This method is for development/testing purposes
      */
-    public function createTestUser()
+    public function createTestUser(): JsonResponse
     {
         $user = User::firstOrCreate(
             ['email' => 'test@example.com'],

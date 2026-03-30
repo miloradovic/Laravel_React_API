@@ -10,6 +10,16 @@ class PricingService
 {
     /**
      * Calculate quotation based on ages, dates and currency
+     *
+     * @param  list<int>  $ages
+     * @return array{
+     *   total: float,
+     *   currency_id: string,
+     *   trip_length: int,
+     *   breakdown: list<array{age: int, age_load: float, subtotal: float}>,
+     *   start_date: string,
+     *   end_date: string
+     * }
      */
     public function calculateQuotation(array $ages, string $startDate, string $endDate, string $currencyId): array
     {
@@ -49,7 +59,7 @@ class PricingService
         $start = Carbon::createFromFormat('Y-m-d', $startDate);
         $end = Carbon::createFromFormat('Y-m-d', $endDate);
 
-        return $start->diffInDays($end) + 1;
+        return (int) $start->diffInDays($end) + 1;
     }
 
     /**
@@ -86,12 +96,14 @@ class PricingService
 
     /**
      * Get all age load brackets for reference
+     *
+     * @return list<array{min_age: int, max_age: int, load_factor: float}>
      */
     public function getAgeLoadTable(): array
     {
         $config = PricingConfig::getActive();
 
-        return $config->brackets->map(fn ($b) => [
+        return $config->brackets->map(static fn (AgeLoadBracket $b): array => [
             'min_age' => $b->min_age,
             'max_age' => $b->max_age,
             'load_factor' => $b->load_factor,
@@ -108,6 +120,8 @@ class PricingService
 
     /**
      * Get supported currencies
+     *
+     * @return list<array{code: string, name: string, symbol: string}>
      */
     public function getSupportedCurrencies(): array
     {

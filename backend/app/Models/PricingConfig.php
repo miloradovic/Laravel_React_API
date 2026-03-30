@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +12,7 @@ use Illuminate\Support\Facades\Cache;
 
 class PricingConfig extends Model
 {
+    /** @use HasFactory<Factory<self>> */
     use HasFactory;
 
     protected $table = 'pricing_configs';
@@ -31,17 +34,23 @@ class PricingConfig extends Model
         ];
     }
 
+    /** @return HasMany<AgeLoadBracket, $this> */
     public function brackets(): HasMany
     {
         return $this->hasMany(AgeLoadBracket::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function activatedByUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'activated_by');
     }
 
-    public function scopeActive($query)
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }

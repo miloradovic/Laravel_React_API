@@ -10,6 +10,7 @@ use Illuminate\Validation\Rule;
 
 class QuotationRequest extends FormRequest
 {
+    /** @var array<int, string>|null */
     private ?array $supportedCurrencyCodes = null;
 
     /**
@@ -96,10 +97,10 @@ class QuotationRequest extends FormRequest
 
         $currencies = $this->pricingService()->getSupportedCurrencies();
 
-        $this->supportedCurrencyCodes = array_values(array_map(
+        $this->supportedCurrencyCodes = array_map(
             static fn (array $currency) => $currency['code'],
             $currencies
-        ));
+        );
 
         return $this->supportedCurrencyCodes;
     }
@@ -131,10 +132,10 @@ class QuotationRequest extends FormRequest
      */
     private function parseAges(string $ageList): array
     {
-        return array_values(array_map(
+        return array_map(
             static fn (string $age) => (int) trim($age),
             explode(',', $ageList)
-        ));
+        );
     }
 
     private function pricingService(): PricingService
