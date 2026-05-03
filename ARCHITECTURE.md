@@ -21,7 +21,7 @@ Users log in, submit trip details, and receive a quotation with per-traveler bre
 ### API Endpoints (Current)
 
 - `POST /api/auth/login` (public)
-- `POST /api/quotation` (JWT required)
+- `POST /api/quotation` (JWT required, rate-limited to 3 requests/minute per user)
 - `GET /api/quotation/currencies` (JWT required)
 - `GET /api/health` (public)
 
@@ -84,6 +84,7 @@ Trip length is inclusive of start and end dates.
 ## Security and Validation
 
 - JWT middleware protects quotation endpoints.
+- Quotation creation is rate-limited to 3 requests per minute per authenticated user.
 - Server-side validation enforces:
   - ages format and allowed ranges
   - supported currency (`EUR`, `GBP`, `USD` from DB)

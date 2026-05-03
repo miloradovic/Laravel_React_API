@@ -22,7 +22,7 @@ Route::prefix('auth')->group(function () {
 
 // Protected routes requiring JWT authentication
 Route::middleware('jwt.auth')->group(function () {
-    Route::post('quotation', [QuotationController::class, 'calculate']);
+    Route::post('quotation', [QuotationController::class, 'calculate'])->middleware('throttle:3,1');
     Route::get('quotation/currencies', [QuotationController::class, 'getCurrencies']);
 });
 

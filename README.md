@@ -14,6 +14,11 @@ This is a full-stack app built with a **Laravel 13 REST API** and a **React 19**
 
 The price logic is transparent: `price = 3 per day × age multiplier`. Younger travelers pay less. No black box.
 
+## API limits
+
+- `POST /api/quotation` is rate-limited to **3 requests per minute** per authenticated user.
+- If the limit is exceeded, the API responds with HTTP `429 Too Many Requests`.
+
 | Age range | Multiplier |
 |-----------|------------|
 | 18–30     | 0.6        |
